@@ -1,9 +1,10 @@
 use core::convert::Infallible;
 use core::time::Duration;
 
-use embedded_hal::blocking::spi::{Transfer, Write};
-use embedded_hal::digital::v2::OutputPin;
-use embedded_hal::timer::CountDown;
+use embedded_hal::digital::blocking::OutputPin;
+use embedded_hal::spi::ErrorType;
+use embedded_hal::spi::blocking::{SpiBusFlush, SpiBusWrite};
+use embedded_hal_0_2::timer::CountDown;
 
 use crate::spi::SPIInterface;
 use crate::Pn532;
@@ -35,8 +36,6 @@ pub struct NoOpSPI;
 pub struct NoOpTimer;
 
 impl OutputPin for NoOpCS {
-    type Error = Infallible;
-
     fn set_low(&mut self) -> Result<(), Self::Error> {
         Ok(())
     }
@@ -46,20 +45,24 @@ impl OutputPin for NoOpCS {
     }
 }
 
-impl Write<u8> for NoOpSPI {
+impl embedded_hal::digital::ErrorType for NoOpCS {
     type Error = Infallible;
+}
 
+impl SpiBusWrite<u8> for NoOpSPI {
     fn write(&mut self, _: &[u8]) -> Result<(), Self::Error> {
         Ok(())
     }
 }
 
-impl Transfer<u8> for NoOpSPI {
-    type Error = Infallible;
-
-    fn transfer<'w>(&mut self, words: &'w mut [u8]) -> Result<&'w [u8], Self::Error> {
-        Ok(words)
+impl SpiBusFlush for NoOpSPI {
+    fn flush(&mut self) -> Result<(), Self::Error> {
+        Ok(())
     }
+}
+
+impl ErrorType for NoOpSPI {
+    type Error = Infallible;
 }
 
 impl CountDown for NoOpTimer {

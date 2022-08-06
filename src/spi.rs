@@ -10,8 +10,8 @@ use core::convert::Infallible;
 use core::fmt::Debug;
 use core::task::Poll;
 
-use embedded_hal::blocking::spi::{Transfer, Write};
-use embedded_hal::digital::v2::{InputPin, OutputPin};
+use embedded_hal::spi::blocking::SpiBusWrite;
+use embedded_hal::digital::blocking::{InputPin, OutputPin};
 
 use crate::Interface;
 
@@ -37,9 +37,7 @@ pub const PN532_SPI_READY: u8 = as_lsb(0x01);
 #[derive(Clone, Debug)]
 pub struct SPIInterface<SPI, CS>
 where
-    SPI: Transfer<u8>,
-    SPI: Write<u8, Error = <SPI as Transfer<u8>>::Error>,
-    <SPI as Transfer<u8>>::Error: Debug,
+    SPI: SpiBusWrite<u8>,
     CS: OutputPin<Error = Infallible>,
 {
     pub spi: SPI,
@@ -48,12 +46,10 @@ where
 
 impl<SPI, CS> Interface for SPIInterface<SPI, CS>
 where
-    SPI: Transfer<u8>,
-    SPI: Write<u8, Error = <SPI as Transfer<u8>>::Error>,
-    <SPI as Transfer<u8>>::Error: Debug,
+    SPI: SpiBusWrite<u8>,
     CS: OutputPin<Error = Infallible>,
 {
-    type Error = <SPI as Transfer<u8>>::Error;
+    type Error = SPI::Error;
 
     fn write(&mut self, frame: &[u8]) -> Result<(), Self::Error> {
         self.cs.set_low().ok();
@@ -73,7 +69,7 @@ where
     fn wait_ready(&mut self) -> Poll<Result<(), Self::Error>> {
         self.spi.write(&[PN532_SPI_STATREAD])?;
         let mut buf = [0x00];
-        self.spi.transfer(&mut buf)?;
+        self.spi.write(&mut buf)?;
         if buf[0] == PN532_SPI_READY {
             Poll::Ready(Ok(()))
         } else {
@@ -84,7 +80,7 @@ where
     fn read(&mut self, buf: &mut [u8]) -> Result<(), Self::Error> {
         self.cs.set_low().ok();
         self.spi.write(&[PN532_SPI_DATAREAD])?;
-        self.spi.transfer(buf)?;
+        self.spi.write(buf)?;
         self.cs.set_high().ok();
 
         #[cfg(feature = "msb-spi")]
@@ -99,9 +95,7 @@ where
 #[derive(Clone, Debug)]
 pub struct SPIInterfaceWithIrq<SPI, CS, IRQ>
 where
-    SPI: Transfer<u8>,
-    SPI: Write<u8, Error = <SPI as Transfer<u8>>::Error>,
-    <SPI as Transfer<u8>>::Error: Debug,
+    SPI: SpiBusWrite<u8>,
     CS: OutputPin<Error = Infallible>,
     IRQ: InputPin<Error = Infallible>,
 {
@@ -112,13 +106,11 @@ where
 
 impl<SPI, CS, IRQ> Interface for SPIInterfaceWithIrq<SPI, CS, IRQ>
 where
-    SPI: Transfer<u8>,
-    SPI: Write<u8, Error = <SPI as Transfer<u8>>::Error>,
-    <SPI as Transfer<u8>>::Error: Debug,
+    SPI: SpiBusWrite<u8>,
     CS: OutputPin<Error = Infallible>,
     IRQ: InputPin<Error = Infallible>,
 {
-    type Error = <SPI as Transfer<u8>>::Error;
+    type Error = SPI::Error;
 
     fn write(&mut self, frame: &[u8]) -> Result<(), Self::Error> {
         self.cs.set_low().ok();
@@ -147,7 +139,7 @@ where
     fn read(&mut self, buf: &mut [u8]) -> Result<(), Self::Error> {
         self.cs.set_low().ok();
         self.spi.write(&[PN532_SPI_DATAREAD])?;
-        self.spi.transfer(buf)?;
+        self.spi.write(buf)?;
         self.cs.set_high().ok();
 
         #[cfg(feature = "msb-spi")]

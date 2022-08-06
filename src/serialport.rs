@@ -4,7 +4,7 @@ use core::task::Poll;
 use std::io::Write;
 use std::time::{Duration, Instant};
 
-use embedded_hal::timer::CountDown;
+use embedded_hal_0_2::timer::CountDown;
 use serialport::SerialPort;
 
 use crate::Interface;
