@@ -9,9 +9,8 @@
 use core::convert::Infallible;
 use core::fmt::Debug;
 use core::task::Poll;
-
-use embedded_hal::spi::blocking::SpiBusWrite;
-use embedded_hal::digital::blocking::{InputPin, OutputPin};
+use embedded_hal::digital::{InputPin, OutputPin};
+use embedded_hal::spi::SpiBusWrite;
 
 use crate::Interface;
 

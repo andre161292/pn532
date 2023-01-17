@@ -17,7 +17,7 @@ keywords = [
 ]
 
 [dependencies]
-embedded-hal = { version = "=1.0.0-alpha.8"}
+embedded-hal = { version = "=1.0.0-alpha.9" }
 embedded-hal-0-2 = { package = "embedded-hal", version = "0.2", features = ["unproven"] }
 nb = "1.0.0"
 void = { version = "1.0.2", default_features = false }
