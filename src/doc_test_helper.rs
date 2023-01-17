@@ -1,9 +1,8 @@
 use core::convert::Infallible;
 use core::time::Duration;
+use embedded_hal::digital::OutputPin;
 
-use embedded_hal::digital::blocking::OutputPin;
-use embedded_hal::spi::ErrorType;
-use embedded_hal::spi::blocking::{SpiBusFlush, SpiBusWrite};
+use embedded_hal::spi::{ErrorType, SpiBusFlush, SpiBusWrite};
 use embedded_hal_0_2::timer::CountDown;
 
 use crate::spi::SPIInterface;
