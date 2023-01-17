@@ -4,9 +4,8 @@ use core::convert::Infallible;
 use core::fmt::Debug;
 use core::task::Poll;
 
-use embedded_hal::i2c::ErrorType;
-use embedded_hal::i2c::blocking::{Operation, I2c};
-use embedded_hal::digital::blocking::InputPin;
+use embedded_hal::digital::InputPin;
+use embedded_hal::i2c::{ErrorType, I2c, Operation};
 
 use crate::Interface;
 
@@ -27,7 +26,7 @@ where
 
 impl<I2C> Interface for I2CInterface<I2C>
 where
-    I2C: I2c + ErrorType
+    I2C: I2c + ErrorType,
 {
     type Error = <I2C as ErrorType>::Error;
 
