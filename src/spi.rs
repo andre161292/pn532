@@ -70,7 +70,7 @@ where
 
         self.cs.set_low().ok();
         self.spi.write(&[PN532_SPI_STATREAD])?;
-        self.spi.transfer(&mut buf)?;
+        self.spi.write(&mut buf)?;
         self.cs.set_high().ok();
 
         if buf[0] == PN532_SPI_READY {
