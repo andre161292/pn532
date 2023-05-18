@@ -36,9 +36,7 @@ where
 
     fn wait_ready(&mut self) -> Poll<Result<(), Self::Error>> {
         let mut buf = [0];
-        self.i2c.read(I2C_ADDRESS, &mut buf)?;
-
-        if buf[0] == PN532_I2C_READY {
+        if self.i2c.read(I2C_ADDRESS, &mut buf).is_ok() && buf[0] == PN532_I2C_READY {
             Poll::Ready(Ok(()))
         } else {
             Poll::Pending

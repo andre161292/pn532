@@ -21,7 +21,7 @@ embedded-hal = { version = "=1.0.0-alpha.9" }
 embedded-hal-0-2 = { package = "embedded-hal", version = "0.2", features = ["unproven"] }
 nb = "1.0.0"
 void = { version = "1.0.2", default_features = false }
-serialport = { version = "4.0.1", optional = true }
+serialport = { version = "4.2.0", optional = true }
 
 [features]
 msb-spi = []
