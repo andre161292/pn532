@@ -10,7 +10,7 @@ use core::convert::Infallible;
 use core::fmt::Debug;
 use core::task::Poll;
 use embedded_hal::digital::{InputPin, OutputPin};
-use embedded_hal::spi::SpiBusWrite;
+use embedded_hal::spi::SpiBus;
 
 use crate::Interface;
 
@@ -36,7 +36,7 @@ pub const PN532_SPI_READY: u8 = as_lsb(0x01);
 #[derive(Clone, Debug)]
 pub struct SPIInterface<SPI, CS>
 where
-    SPI: SpiBusWrite<u8>,
+    SPI: SpiBus<u8>,
     CS: OutputPin<Error = Infallible>,
 {
     pub spi: SPI,
@@ -45,7 +45,7 @@ where
 
 impl<SPI, CS> Interface for SPIInterface<SPI, CS>
 where
-    SPI: SpiBusWrite<u8>,
+    SPI: SpiBus<u8>,
     CS: OutputPin<Error = Infallible>,
 {
     type Error = SPI::Error;
@@ -98,7 +98,7 @@ where
 #[derive(Clone, Debug)]
 pub struct SPIInterfaceWithIrq<SPI, CS, IRQ>
 where
-    SPI: SpiBusWrite<u8>,
+    SPI: SpiBus<u8>,
     CS: OutputPin<Error = Infallible>,
     IRQ: InputPin<Error = Infallible>,
 {
@@ -109,7 +109,7 @@ where
 
 impl<SPI, CS, IRQ> Interface for SPIInterfaceWithIrq<SPI, CS, IRQ>
 where
-    SPI: SpiBusWrite<u8>,
+    SPI: SpiBus<u8>,
     CS: OutputPin<Error = Infallible>,
     IRQ: InputPin<Error = Infallible>,
 {
